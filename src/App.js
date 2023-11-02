@@ -1,23 +1,47 @@
-import logo from './logo.svg';
+// App.js
+import React, { useState } from 'react';
 import './App.css';
+import candidatesData from './candidates';
+import AvailableCandidatesTable from './AvailableCandidatesTable';
+import SelectedCandidatesTable from './SelectedCandidatesTable';
 
 function App() {
+  const [availableCandidates, setAvailableCandidates] = useState(candidatesData);
+  const [selectedCandidates, setSelectedCandidates] = useState([]);
+  const [disabledCandidates, setDisabledCandidates] = useState([]);
+
+  const handleCandidateSelect = (candidate) => {
+    const updatedSelectedCandidates = [...selectedCandidates, candidate];
+    setSelectedCandidates(updatedSelectedCandidates);
+    setDisabledCandidates([...disabledCandidates, candidate.id]);
+  };
+
+  const handleCandidateRemove = (candidate) => {
+    const updatedSelectedCandidates = selectedCandidates.filter((c) => c.id !== candidate.id);
+    setSelectedCandidates(updatedSelectedCandidates);
+    const updatedAvailableCandidates = [...availableCandidates, candidate];
+    setAvailableCandidates(updatedAvailableCandidates);
+    const updatedDisabledCandidates = disabledCandidates.filter((id) => id !== candidate.id);
+    setDisabledCandidates(updatedDisabledCandidates);
+  };
+
+  const handleCandidateRestore = (id) => {
+    const updatedDisabledCandidates = disabledCandidates.filter((candidateId) => candidateId !== id);
+    setDisabledCandidates(updatedDisabledCandidates);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AvailableCandidatesTable
+        candidates={availableCandidates}
+        onCandidateSelect={handleCandidateSelect}
+        disabledCandidates={disabledCandidates}
+      />
+      <SelectedCandidatesTable
+        selectedCandidates={selectedCandidates}
+        onCandidateRemove={handleCandidateRemove}
+        onCandidateRestore={handleCandidateRestore}
+      />
     </div>
   );
 }
