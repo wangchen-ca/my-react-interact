@@ -1,6 +1,6 @@
 # My sample React application - my-react-interact
 
-- Technical points: to reflects User interact/click/input, in React, mostly equals to updating state data. React will update the web page automatically for you. We don't need to write code to display a popup, delete a row from a table, or hide a div, we only change the settings or flags in state. [Reread the chapter](https://react.dev/learn/thinking-in-react)
+- Technical points: to reflect user's interact/click/input, in React, equals to updating state data. React will update the web page automatically for you. We don't need to write code to display a popup, delete a row from a table, or hide a div, we only change the settings or flags in state. [Reread the chapter](https://react.dev/learn/thinking-in-react)
 
 The app show 2 tables, one lists available candidates, the other displays selected ones. Users can select/remove candidates.
 
