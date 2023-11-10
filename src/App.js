@@ -1,14 +1,46 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import './App.css';
-import candidatesData from './candidates';
+// import candidatesData from './candidates';
 import AvailableCandidatesTable from './AvailableCandidatesTable';
 import SelectedCandidatesTable from './SelectedCandidatesTable';
 
+//
+import { ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
+import { GET_CANDIDATES } from './queries';
+
+/*
+By initializing the graphQL ApolloClient outside of the component, 
+you ensure that it is only created once during the lifetime of your application, 
+and it can be reused across multiple components. 
+if not, the client will be created every time React check to refresh, 
+which cause infinitive loop of network fetching data, 
+the page will stuck at showing Loading... 
+*/
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache(),
+});
+
 function App() {
-  const [availableCandidates, setAvailableCandidates] = useState(candidatesData);
+  const [availableCandidates, setAvailableCandidates] = useState([]);  //candidatesData
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [disabledCandidates, setDisabledCandidates] = useState([]);
+  
+  //---------------------------------------------
+  // Initialize Apollo Client
+  const { loading, error, data } = useQuery(GET_CANDIDATES, {
+    client: client,
+  });
+
+  useEffect(() => {
+    if (!loading && data) {
+      console.log(data);
+      setAvailableCandidates(data.candidates);
+    }
+  }, [loading, data]);    
+  //--------------------------------------------
+
 
   const handleCandidateSelect = (candidate) => {
     const updatedSelectedCandidates = [...selectedCandidates, candidate];
@@ -30,6 +62,11 @@ function App() {
     setDisabledCandidates(updatedDisabledCandidates);
   };
 
+  // Handle loading and error states
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+    
   return (
     <div className="App">
       <AvailableCandidatesTable
